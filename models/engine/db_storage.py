@@ -51,19 +51,23 @@ class DBStorage:
                     new_dict[key] = obj
         return (new_dict)
 
+    
     def new(self, obj):
         """add the object to the current database session"""
         self.__session.add(obj)
 
+    
     def save(self):
         """commit all changes of the current database session"""
         self.__session.commit()
 
+    
     def delete(self, obj=None):
         """delete from the current database session obj if not None"""
         if obj is not None:
             self.__session.delete(obj)
 
+    
     def reload(self):
         """reloads data from the database"""
         Base.metadata.create_all(self.__engine)
@@ -71,6 +75,27 @@ class DBStorage:
         Session = scoped_session(sess_factory)
         self.__session = Session
 
+    
     def close(self):
         """call remove() method on the private session attribute"""
         self.__session.remove()
+
+    
+    def get(self, cls, id):
+        """ 
+            retrieves one object based on class name and id 
+        """
+        if cls and id:
+            fetch = "{}.{}".format(cls, id)
+            all_obj = self.all(cls)
+            return all_obj.get(fetch)
+        return None
+
+    
+    def count(self, cls=None):
+        """
+          returns the count of all objects in storage
+        """
+        return (len(self.all(cls)))
+
+
